@@ -1,0 +1,27 @@
+{
+  "name": "tooltip-web-component",
+  "version": "0.0.1",
+  "author": "Nikola Pavicevic <nijepa@gmail.com>",
+  "description": "Vue3 web-component tooltip with Vite",
+  "keywords": [
+    "Vue3",
+    "web-component",
+    "vite",
+    "tooltip"
+  ],
+  "repository": "github:https://github.com/nijepa/vue3-web-components",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "sass": "^1.56.1",
+    "vite": "^3.2.4"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^3.2.0",
+    "vue": "^3.2.45"
+  }
+}
