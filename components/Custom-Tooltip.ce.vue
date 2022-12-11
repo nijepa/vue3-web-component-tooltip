@@ -1,23 +1,25 @@
 <template>
-  <component
-    :is="isAbbreviation ? 'abbr' : 'span'"
-    :data-label="labelText"
-    :aria-label="labelText"
-    role="tooltip"
-    :class="[
-      hasPosition,
-      hasSize,
-      {
-        'vue-custom-tooltip': isActive && labelText,
-        'is-sticky': isSticky,
-        'has-multiline': isMultiline,
-        'is-underlined': isUnderlined || isAbbreviation,
-      },
-    ]"
-    :style="[dynamicStyles, { cursor: isAbbreviation ? 'help' : 'pointer' }]"
-  >
-    <slot name="default"></slot>
-  </component>
+	<transition name="wobble" appear >
+		<component
+			:is="isAbbreviation ? 'abbr' : 'span'"
+			:data-label="labelText"
+			:aria-label="labelText"
+			role="tooltip"
+			:class="[
+				hasPosition,
+				hasSize,
+				{
+					'vue-custom-tooltip': isActive && labelText,
+					'is-sticky': isSticky,
+					'has-multiline': isMultiline,
+					'is-underlined': isUnderlined || isAbbreviation,
+				},
+			]"
+			:style="{ cursor: isAbbreviation ? 'help' : 'pointer' }"
+		>
+			<slot name="default"></slot>
+		</component>
+  </transition>
 </template>
 
 <script setup>
@@ -69,7 +71,15 @@ const props = defineProps({
   font: {
     type: String,
     default: "'Open Sans', sans-serif"
-  }
+  },
+	weight: {
+		type: Number,
+		default: 400
+	},
+	radius: {
+		type: String,
+		default: '4px'
+	}
 });
 const labelText = ref(props.label || null)
 const isActive = ref(props.active || true)
@@ -79,9 +89,10 @@ const isUnderlined = ref(props.underlined || false)
 const isAbbreviation = ref(props.abbreviation || false)
 const hasPosition = ref(props.position || 'is-top')
 const hasSize = ref(props.size || 'is-medium')
-const back = ref(props.background)
-const col = ref(props.color)
+const background = ref(props.background)
+const color = ref(props.color)
 const font = ref(props.font)
+const radius = ref(props.radius)
 // const dynamicStyles = computed(() => {
 //   return {
 //     '--vue-custom-tooltip-color':
@@ -221,22 +232,12 @@ export default {
 }
 </script> -->
 
-<style>
-/* Set defaults */
-.vue-custom-tooltip {
-  --vue-custom-tooltip-color: v-bind(col);
-  --vue-custom-tooltip-background: v-bind(back);
-  --vue-custom-tooltip-border-radius: 4px;
-  --vue-custom-tooltip-font-weight: 400;
-}
-</style>
-
 <style lang="scss">
-// $tooltip-color = var(--vue-custom-tooltip-color, #fff) // default color
-// $tooltip-background = var(--vue-custom-tooltip-background, #000) // default background color
-// $tooltip-radius = var(--vue-custom-tooltip-border-radius, 100px) // default border radius
-// $weight-normal = var(--vue-custom-tooltip-font-weight, 400) // default font weight
-// $speed = 86ms
+$tooltip-color: v-bind(color); // color
+$tooltip-background:  v-bind(background); // background color
+$tooltip-radius: v-bind(radius); // border radius
+$tooltip-weight: v-bind(weight); // font weight
+$speed: 400ms; // animation speed
 // $easing = ease-out
 .vue-custom-tooltip {
 	position: relative;
@@ -245,10 +246,17 @@ export default {
 	&.is-top {
 		&:before {
 			border-top: 5px solid #000;
-			border-top: 5px solid var(--vue-custom-tooltip-background, #000);
+			border-top: 5px solid $tooltip-background;
 			border-right: 5px solid transparent;
 			border-left: 5px solid transparent;
 			bottom: calc(100% + 2px);
+			position: absolute;
+  top: -40% !important; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color:$tooltip-background transparent transparent transparent;
 		}
 		&.has-multiline {
 			&.is-small {
@@ -274,7 +282,7 @@ export default {
 		&:before {
 			border-top: 5px solid transparent;
 			border-right: 5px solid #000;
-			border-right: 5px solid var(--vue-custom-tooltip-background, #000);
+			border-right: 5px solid $tooltip-background;
 			border-bottom: 5px solid transparent;
 			left: calc(100% + 2px);
 		}
@@ -301,10 +309,15 @@ export default {
 	&.is-bottom {
 		&:before {
 			border-right: 5px solid transparent;
-			border-bottom: 5px solid #000;
-			border-bottom: 5px solid var(--vue-custom-tooltip-background, #000);
+			border-bottom: 5px solid $tooltip-background;
 			border-left: 5px solid transparent;
-			top: calc(100% + 2px);
+			//top: calc(100% + 2px);
+	top: 140%;  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
 		}
 		&.has-multiline {
 			&.is-small {
@@ -331,7 +344,7 @@ export default {
 			border-top: 5px solid transparent;
 			border-bottom: 5px solid transparent;
 			border-left: 5px solid #000;
-			border-left: 5px solid var(--vue-custom-tooltip-background, #000);
+			border-left: 5px solid $tooltip-background;
 			right: calc(100% + 2px);
 		}
 		&.has-multiline {
@@ -355,8 +368,7 @@ export default {
 		}
 	}
 	&.is-underlined {
-		border-bottom: 1px dotted #000;
-		border-bottom: 1px dotted var(--vue-custom-tooltip-background, #000);
+		border-bottom: 1px dotted $tooltip-background;
 		line-height: 1.2;
 	}
 	&:before {
@@ -364,18 +376,14 @@ export default {
 	}
 	&:after {
 		content: attr(data-label);
-		color: #fff;
-		color: var(--vue-custom-tooltip-color, #fff);
-		background: #000;
-		background: var(--vue-custom-tooltip-background, #000);
+		color: $tooltip-color;
+		background: $tooltip-background;
 		width: auto;
 		max-width: 100vw;
 		padding: 0.35rem 0.75rem 0.45rem;
-		border-radius: 100px;
-		border-radius: var(--vue-custom-tooltip-border-radius, 100px);
+		border-radius: $tooltip-radius;
 		font-size: 0.85rem !important;
-		font-weight: 400;
-		font-weight: var(--vue-custom-tooltip-font-weight, 400);
+		font-weight: $tooltip-weight;
 		line-height: 1.3;
 		letter-spacing: normal !important;
 		text-transform: none;
@@ -432,11 +440,12 @@ export default {
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
-	transition: opacity 86ms ease-out, visibility 86ms ease-out;
+	transition: opacity $speed ease-in-out, visibility $speed ease-in-out;
+	animation: wobbles 0.8s ease;
+	font-family: v-bind(font);
 }
 .vue-custom-tooltip:after {
   content: attr(data-label);
-  font-family: v-bind(font);
 }
 .vue-custom-tooltip:not([data-label='']):hover:before,
 .vue-custom-tooltip:not([data-label='']):hover:after {
@@ -452,5 +461,43 @@ export default {
 .vue-custom-tooltip:not([data-label='']).is-sticky:after {
 	opacity: 1;
 	visibility: visible;
+}
+
+.wobble-enter-active {
+  animation: wobbles 0.8s ease;
+}
+.wobble-leave-active {
+  transition: all 1s ease;
+  /* animation: wobbles 1s linear; */
+}
+@keyframes wobbles {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0px);
+    opacity: 0.3;
+  }
+  60% {
+    transform: translateX(8px);
+    opacity: 0.3;
+  }
+  70% {
+    transform: translateX(-8px);
+    opacity: 0.7;
+  }
+  80% {
+    transform: translateX(4px);
+    opacity: 0.7;
+  }
+  90% {
+    transform: translateX(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
 }
 </style>

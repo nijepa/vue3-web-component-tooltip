@@ -21,27 +21,28 @@
 
   <body>
     <div id="app">
-      <h1>Vue3 Web Components</h1>
-      <h3>Tooltip</h3>
-      <custom-tooltip label="This is a tooltip" position="is-bottom"  underlined><button>sdfgs</button></custom-tooltip>
+      <h3>Vue3 Web Components</h3>
+      <h1>Tooltip</h1>
+      <br><br>
+      <custom-tooltip label="This is a tooltip"  position="is-bottom" ><button>sdfgs</button></custom-tooltip>
       <custom-tooltip label="second tooltip second tooltip second tooltip" background='#1b2735' color="#fff" multiline ><input /></custom-tooltip>
-      <p>asfasfasfsafasf<custom-tooltip label="This is a tooltip">AAAAA</custom-tooltip>awrerewrwwerfwerw</p>
+      <p>asfasfasfsafasf<custom-tooltip label="This is a tooltip" abbreviation background='green'>AAAAA</custom-tooltip>awrerewrwwerfwerw</p>
     </div>
     <script type="module" src="/main.js"></script>
     <script>
       const defaultOptions = {
-        name: 'VueCustomTooltip',
-        color: '#fff',
-        background: '#000',
-        borderRadius: 100,
-        fontWeight: 400,
+        color: 'red',
+        background: '#fff',
+        radius: '0',
+        weight: 700,
       }
-      const datepicker = document.querySelector('custom-datepicker');
+      const datepicker = document.querySelector('custom-tooltip');
       function setAttributes(el, attrs) {
         for(var key in attrs) {
           el.setAttribute(key, attrs[key]);
         }
       }
+      setAttributes(datepicker, defaultOptions)
       const sel = document.querySelector('#deliveryTime')
       const dateSelected = (e) => {
         datepicker.value = e.detail.val;

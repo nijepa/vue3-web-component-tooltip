@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
@@ -30,7 +31,7 @@ export default defineConfig({
   // }
   // build: {
   //   rollupOptions: {
-  //     target: "./assets/dp.js"
+  //     target: "./assets/tooltip.js"
   //   }
   // }
 });
