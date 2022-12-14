@@ -9,7 +9,7 @@
 				hasPosition,
 				hasSize,
 				{
-					'vue-custom-tooltip': !isActive && labelText,
+					'vue-custom-tooltip': isActive && labelText,
 					'is-sticky': isSticky,
 					'has-multiline': isMultiline,
 					'is-underlined': isUnderlined || isAbbreviation,
@@ -28,8 +28,8 @@ import { ref, computed, watch, useAttrs } from "vue";
 // setting props
 const props = defineProps({
   active: {
-    type: Boolean,
-    default: true,
+    type: String,
+    default: 'true',
   },
   label: {
     type: String,
@@ -82,7 +82,7 @@ const props = defineProps({
 	}
 });
 const labelText = ref(props.label || null)
-const isActive = ref(props.active === 'false')
+const isActive = ref(props.active === 'true')
 const isSticky = ref(props.sticky || false)
 const isMultiline = ref(props.multiline || false)
 const isUnderlined = ref(props.underlined || false)
@@ -93,7 +93,15 @@ const background = ref(props.background)
 const color = ref(props.color)
 const font = ref(props.font)
 const radius = ref(props.radius)
-console.log( isActive.value)
+console.log('rr', isActive.value)
+
+watch(
+  () => props.active,
+  (newValue, oldValue) => {
+    console.log("Watch props.selected function called with args:", newValue, oldValue);
+    isActive.value = newValue;
+  }
+);
 // const dynamicStyles = computed(() => {
 //   return {
 //     '--vue-custom-tooltip-color':
@@ -240,9 +248,6 @@ $tooltip-radius: v-bind(radius); // border radius
 $tooltip-weight: v-bind(weight); // font weight
 $speed: 400ms; // animation speed
 // $easing = ease-out
-.active:after {
-  content: "" !important;
-}
 .vue-custom-tooltip {
 	position: relative;
 	display: inline-block;

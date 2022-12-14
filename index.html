@@ -24,17 +24,24 @@
       <h3>Vue3 Web Components</h3>
       <h1>Tooltip</h1>
       <br><br>
-      <custom-tooltip active="false" label="This is a tooltip"  position="is-bottom" ><button>sdfgs</button></custom-tooltip>
+      <custom-tooltip label="This is a tooltip"  position="is-bottom" ><button onclick="act()">sdfgs</button></custom-tooltip>
       <custom-tooltip label="second tooltip second tooltip second tooltip" background='#1b2735' color="#fff" multiline ><input /></custom-tooltip>
-      <p>asfasfasfsafasf<custom-tooltip label="This is a tooltip &#160;" abbreviation background='green'> AAAAA </custom-tooltip> awrerew rwwerfwerw</p>
+      <p>asfasfasfsafasf<custom-tooltip label="" abbreviation background='green'> AAAAA </custom-tooltip> awrerew rwwerfwerw</p>
     </div>
     <script type="module" src="/main.js"></script>
     <script>
+      //let state = 'false'
+      const act = () => {
+        console.log('st',defaultOptions.active)
+        datepicker.setAttribute('active', 'true')
+        defaultOptions.active = ''
+      }
       const defaultOptions = {
         color: 'red',
         background: '#fff',
         radius: '0',
         weight: 700,
+        active: 'false'
       }
       const datepicker = document.querySelector('custom-tooltip');
       function setAttributes(el, attrs) {
