@@ -9,7 +9,7 @@
 				hasPosition,
 				hasSize,
 				{
-					'vue-custom-tooltip': isActive && labelText,
+					'vue-custom-tooltip': !isActive && labelText,
 					'is-sticky': isSticky,
 					'has-multiline': isMultiline,
 					'is-underlined': isUnderlined || isAbbreviation,
@@ -82,7 +82,7 @@ const props = defineProps({
 	}
 });
 const labelText = ref(props.label || null)
-const isActive = ref(props.active || true)
+const isActive = ref(props.active === 'false')
 const isSticky = ref(props.sticky || false)
 const isMultiline = ref(props.multiline || false)
 const isUnderlined = ref(props.underlined || false)
@@ -93,6 +93,7 @@ const background = ref(props.background)
 const color = ref(props.color)
 const font = ref(props.font)
 const radius = ref(props.radius)
+console.log( isActive.value)
 // const dynamicStyles = computed(() => {
 //   return {
 //     '--vue-custom-tooltip-color':
@@ -239,6 +240,9 @@ $tooltip-radius: v-bind(radius); // border radius
 $tooltip-weight: v-bind(weight); // font weight
 $speed: 400ms; // animation speed
 // $easing = ease-out
+.active:after {
+  content: "" !important;
+}
 .vue-custom-tooltip {
 	position: relative;
 	display: inline-block;
