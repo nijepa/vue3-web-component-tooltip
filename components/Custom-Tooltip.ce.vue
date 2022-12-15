@@ -98,7 +98,7 @@ console.log('rr', isActive.value)
 watch(
   () => props.active,
   (newValue, oldValue) => {
-    console.log("Watch props.selected function called with args:", newValue, oldValue);
+    console.log("Watch props.active function called with args:", newValue, oldValue);
     isActive.value = newValue;
   }
 );
@@ -246,42 +246,40 @@ $tooltip-color: v-bind(color); // color
 $tooltip-background:  v-bind(background); // background color
 $tooltip-radius: v-bind(radius); // border radius
 $tooltip-weight: v-bind(weight); // font weight
-$speed: 400ms; // animation speed
+$speed: 200ms; // animation speed
+$small: 100px; // 140
+$medium: 200px; // 250
+$large: 300px; // 480
 // $easing = ease-out
 .vue-custom-tooltip {
 	position: relative;
-	display: inline-block;
+	display: inline-flex; //flex;
 	text-decoration-line: none !important;
 	&.is-top {
 		&:before {
-			border-top: 5px solid #000;
-			border-top: 5px solid $tooltip-background;
+			border-top: 8px solid $tooltip-background;
 			border-right: 5px solid transparent;
 			border-left: 5px solid transparent;
 			bottom: calc(100% + 2px);
 			position: absolute;
-  top: -40% !important; /* At the bottom of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color:$tooltip-background transparent transparent transparent;
+			bottom: 100% !important;
+			//box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 		}
 		&.has-multiline {
 			&.is-small {
 				&:after {
-					width: 140px;
+					width: $small;
 				}
 			}
 			&.is-medium {
 				&:after {
-					width: 250px;
+					width: $medium;
 					padding: 0.6rem 1.25rem 0.65rem;
 				}
 			}
 			&.is-large {
 				&:after {
-					width: 480px;
+					width: $large;
 					padding: 0.6rem 1rem 0.65rem;
 				}
 			}
@@ -290,26 +288,26 @@ $speed: 400ms; // animation speed
 	&.is-right {
 		&:before {
 			border-top: 5px solid transparent;
-			border-right: 5px solid #000;
-			border-right: 5px solid $tooltip-background;
+			border-right: 8px solid $tooltip-background;
 			border-bottom: 5px solid transparent;
 			left: calc(100% + 2px);
+			left: 100% !important;
 		}
 		&.has-multiline {
 			&.is-small {
 				&:after {
-					width: 140px;
+					width: $small;
 				}
 			}
 			&.is-medium {
 				&:after {
-					width: 250px;
+					width: $medium;
 					padding: 0.6rem 1.25rem 0.65rem;
 				}
 			}
 			&.is-large {
 				&:after {
-					width: 480px;
+					width: $large;
 					padding: 0.6rem 1rem 0.65rem;
 				}
 			}
@@ -318,31 +316,26 @@ $speed: 400ms; // animation speed
 	&.is-bottom {
 		&:before {
 			border-right: 5px solid transparent;
-			border-bottom: 5px solid $tooltip-background;
+			border-bottom: 8px solid $tooltip-background;
 			border-left: 5px solid transparent;
-			//top: calc(100% + 2px);
-	top: 140%;  /* At the top of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent black transparent;
+			top: calc(100% + 2px);
+	    top: 100% !important;  /* At the top of the tooltip */
 		}
 		&.has-multiline {
 			&.is-small {
 				&:after {
-					width: 140px;
+					width: $small;
 				}
 			}
 			&.is-medium {
 				&:after {
-					width: 250px;
+					width: $medium;
 					padding: 0.6rem 1.25rem 0.65rem;
 				}
 			}
 			&.is-large {
 				&:after {
-					width: 480px;
+					width: $large;
 					padding: 0.6rem 1rem 0.65rem;
 				}
 			}
@@ -352,25 +345,25 @@ $speed: 400ms; // animation speed
 		&:before {
 			border-top: 5px solid transparent;
 			border-bottom: 5px solid transparent;
-			border-left: 5px solid #000;
-			border-left: 5px solid $tooltip-background;
+			border-left: 8px solid $tooltip-background;
 			right: calc(100% + 2px);
+			right: 100% !important;
 		}
 		&.has-multiline {
 			&.is-small {
 				&:after {
-					width: 140px;
+					width: $small;
 				}
 			}
 			&.is-medium {
 				&:after {
-					width: 250px;
+					width: $medium;
 					padding: 0.6rem 1.25rem 0.65rem;
 				}
 			}
 			&.is-large {
 				&:after {
-					width: 480px;
+					width: $large;
 					padding: 0.6rem 1rem 0.65rem;
 				}
 			}
