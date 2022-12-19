@@ -1,6 +1,6 @@
 <template>
   <component
-    class="tooltip-container"
+    class="cadooz-tooltip__container"
     :is="isAbbreviation ? 'abbr' : 'span'"
     :class="{ 'is-underlined': isUnderlined || isAbbreviation }"
     :style="{ cursor: isAbbreviation ? 'help' : 'pointer' }"
@@ -18,7 +18,7 @@
         },
       ]"
     >
-      <span :class="{ 'not-active': !isActive || !labelText }">{{
+      <span class="text" :class="{ 'not-active': !isActive || !labelText }">{{
         labelText
       }}</span>
       <svg
@@ -87,6 +87,10 @@ const props = defineProps({
     type: String,
     default: "'Open Sans', sans-serif",
   },
+  fontsize: {
+    type: String,
+    default: "1em",
+  },
   weight: {
     type: Number,
     default: 400,
@@ -115,6 +119,7 @@ const hasSize = ref(props.size || "is-medium");
 const background = ref(props.background);
 const color = ref(props.color);
 const font = ref(props.font);
+const fontSize = ref(props.fontsize)
 const radius = ref(props.radius);
 
 const height = ref(null);
@@ -137,10 +142,9 @@ watch(
       newValue,
       oldValue
     );
-    isActive.value = newValue === 'true';
+    isActive.value = newValue === "true";
   }
 );
-
 </script>
 <style lang="scss">
 $tooltip-color: v-bind(color); // color
@@ -154,7 +158,7 @@ $large: 300px; // 480
 $height: v-bind(height);
 $width: v-bind(width);
 
-.tooltip-container {
+.cadooz-tooltip__container {
   position: relative;
   //display: flex;
   &.is-underlined {
@@ -163,7 +167,7 @@ $width: v-bind(width);
   }
 }
 
-.tooltip-container:hover .cadooz-tooltip {
+.cadooz-tooltip__container:hover .cadooz-tooltip {
   opacity: 1;
   visibility: visible;
   //width: $large;
@@ -180,14 +184,14 @@ $width: v-bind(width);
   pointer-events: none;
   opacity: 0;
   //width: 0;
-  transition: opacity $speed ease-in-out, visibility $speed ease-in-out, width $speed ease-in-out;
+  transition: opacity $speed ease-in-out, visibility $speed ease-in-out,
+    width $speed ease-in-out;
   z-index: 100;
   background: $tooltip-background;
   border-radius: $tooltip-radius;
-  font-size: 0.85rem !important;
-  font-weight: $tooltip-weight;
   font-family: v-bind(font);
-
+  font-size: v-bind(fontSize);
+  font-weight: $tooltip-weight;
   //width: auto;
   max-width: 100vw;
   //white-space: nowrap;
@@ -195,7 +199,6 @@ $width: v-bind(width);
   letter-spacing: normal !important;
   text-transform: none;
   /* box-shadow: rgba(0, 0, 0, 0.3) 0 2px 10px; */
-
 
   &.has-shadow {
     box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
@@ -225,13 +228,14 @@ $width: v-bind(width);
   }
   &.is-left,
   &.is-right {
-    top: -50%;
+    transform: translateY(50%);
+    top: calc(50% + 0px);
   }
   &.is-left {
     right: calc(100% + 10px);
   }
   &.is-right {
-    left: calc(100% + $width);
+    left: calc(100% + $width + 10px);
   }
 }
 
