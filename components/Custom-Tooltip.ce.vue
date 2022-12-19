@@ -116,22 +116,21 @@ const isUnderlined = ref(props.underlined || false);
 const isAbbreviation = ref(props.abbreviation || false);
 const hasPosition = ref(props.position || "is-top");
 const hasSize = ref(props.size || "is-medium");
-const background = ref(props.background);
-const color = ref(props.color);
-const font = ref(props.font);
-const fontSize = ref(props.fontsize)
-const radius = ref(props.radius);
-
-const height = ref(null);
-const width = ref(null);
+const hasBackground = ref(props.background);
+const hasColor = ref(props.color);
+const hasFont = ref(props.font);
+const hasFontSize = ref(props.fontsize);
+const hasRadius = ref(props.radius);
 
 const hasShadow = computed(() =>
   props.shadow === "false" ? "" : "has-shadow"
 );
 
+const hasHeight = ref(null);
+const hasWidth = ref(null);
 onMounted(() => {
-  height.value = elem.value?.children[0]?.scrollHeight + "px";
-  width.value = elem.value?.children[0]?.scrollWidth + "px";
+  hasHeight.value = elem.value?.children[0]?.scrollHeight + "px";
+  hasWidth.value = elem.value?.children[0]?.scrollWidth + "px";
 });
 
 watch(
@@ -147,16 +146,16 @@ watch(
 );
 </script>
 <style lang="scss">
-$tooltip-color: v-bind(color); // color
-$tooltip-background: v-bind(background); // background color
-$tooltip-radius: v-bind(radius); // border radius
+$tooltip-color: v-bind(hasColor); // color
+$tooltip-background: v-bind(hasBackground); // background color
+$tooltip-radius: v-bind(hasRadius); // border radius
 $tooltip-weight: v-bind(weight); // font weight
 $speed: 400ms; // animation speed
 $small: 100px; // 140
 $medium: 200px; // 250
 $large: 300px; // 480
-$height: v-bind(height);
-$width: v-bind(width);
+$height: v-bind(hasHeight);
+$width: v-bind(hasWidth);
 
 .cadooz-tooltip__container {
   position: relative;
@@ -189,8 +188,8 @@ $width: v-bind(width);
   z-index: 100;
   background: $tooltip-background;
   border-radius: $tooltip-radius;
-  font-family: v-bind(font);
-  font-size: v-bind(fontSize);
+  font-family: v-bind(hasFont);
+  font-size: v-bind(hasFontSize);
   font-weight: $tooltip-weight;
   //width: auto;
   max-width: 100vw;
