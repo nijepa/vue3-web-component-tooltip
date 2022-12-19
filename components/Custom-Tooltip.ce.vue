@@ -228,8 +228,8 @@ $width: v-bind(width);
   }
   &.is-left,
   &.is-right {
-    transform: translateY(50%);
-    top: calc(50% + 0px);
+    //transform: translateY(50%);
+    top: calc(-50% + 5px);
   }
   &.is-left {
     right: calc(100% + 10px);
