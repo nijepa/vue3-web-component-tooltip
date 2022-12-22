@@ -146,57 +146,51 @@ watch(
 );
 </script>
 <style lang="scss">
-$tooltip-color: v-bind(hasColor); // color
+$tooltip-color: v-bind(hasColor);           // color
 $tooltip-background: v-bind(hasBackground); // background color
-$tooltip-radius: v-bind(hasRadius); // border radius
-$tooltip-weight: v-bind(weight); // font weight
-$speed: 400ms; // animation speed
-$small: 100px; // 140
-$medium: 200px; // 250
-$large: 300px; // 480
+$tooltip-radius: v-bind(hasRadius);         // border radius
+$tooltip-weight: v-bind(weight);            // font weight
+$speed: 400ms;                              // animation speed
+$small: 100px;                              // 140
+$medium: 200px;                             // 250
+$large: 300px;                              // 480
 $height: v-bind(hasHeight);
 $width: v-bind(hasWidth);
 
 .cadooz-tooltip__container {
   position: relative;
-  //display: flex;
   &.is-underlined {
     border-bottom: 1px dotted $tooltip-background;
     line-height: 1.2;
   }
+  &:hover .cadooz-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
-.cadooz-tooltip__container:hover .cadooz-tooltip {
-  opacity: 1;
-  visibility: visible;
-  //width: $large;
-}
 .not-active {
   display: none;
 }
 .cadooz-tooltip {
   position: absolute;
-  color: $tooltip-color;
-  text-align: center;
-  padding: 1em 0.5em;
   visibility: hidden;
-  pointer-events: none;
   opacity: 0;
-  //width: 0;
-  transition: opacity $speed ease-in-out, visibility $speed ease-in-out,
-    width $speed ease-in-out;
   z-index: 100;
+  padding: 0.75em 0.5em;
+  pointer-events: none;
   background: $tooltip-background;
   border-radius: $tooltip-radius;
+  color: $tooltip-color;
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-transform: none;
   font-family: v-bind(hasFont);
   font-size: v-bind(hasFontSize);
   font-weight: $tooltip-weight;
-  //width: auto;
-  max-width: 100vw;
+  transition: opacity $speed ease-in-out, visibility $speed ease-in-out;
   //white-space: nowrap;
-  line-height: 1.3;
-  letter-spacing: normal !important;
-  text-transform: none;
   /* box-shadow: rgba(0, 0, 0, 0.3) 0 2px 10px; */
 
   &.has-shadow {
@@ -237,10 +231,8 @@ $width: v-bind(hasWidth);
     left: calc(100% + $width + 10px);
   }
 }
-
 .cadooz-tooltip__arrow {
   position: absolute;
-  /* box-shadow: 12px 0 15px -4px rgba(31, 73, 125, 0.8), -12px 0 8px -4px rgba(31, 73, 125, 0.8); */
   rect {
     fill: $tooltip-background;
   }
