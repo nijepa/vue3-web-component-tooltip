@@ -17,9 +17,6 @@
         display: flex;
         justify-content: center;
       }
-      custom-tooltip {
-        /* position: relative; */
-      }
     </style>
   </head>
 
@@ -28,49 +25,18 @@
       <h3>Vue3 Web Components</h3>
       <h1>Tooltip</h1>
       <br><br>
-      <custom-tooltip id="slot1" label="This is a tooltip gffdg ertertert ertere sg rt erte" active="false" background='#1b2735' color="#fff" ><button onclick="act()">sdffsdfdsf sefewt we wert gs</button></custom-tooltip>
-      <custom-tooltip id="slot2" label="second tooltip second tooltip second tooltip" position="is-bottom" background='#1b2735' color="#fff" multiline ><input /></custom-tooltip>
-      <p>asfasfasfsafasf <custom-tooltip id="slot3" label="ettretewtre" abbreviation color="white" background='green'> <span>AAAAA</span> </custom-tooltip> awrerew rwwerfwerw</p>
-
-      <custom-tooltip id="slot4" label="This is a tooltip" position="is-left" ><p>aaaaaaaaaa</p></custom-tooltip>
-
-      <custom-tooltip id="slot5" label="This is a tooltip" multiline size="is-large" background='#1b2735' color="#fff" position="is-left" ><h1>aaaaaaaaaa</h1></custom-tooltip>
-
-      <custom-tooltip id="slot" label="ettretewtre" background='#1b2735' color="#fff"> <img src="/old/nipa.png" alt=""> </custom-tooltip>
+      <button cadooz-tooltip>sdffsdfdsf sefewt we wert gs</button>
+      <input cadooz-tooltip />
+      <br><br>
+      <p>asfasfasfsafasf  <span cadooz-tooltip>AAAAA</span>  awrerew rwwerfwerw</p>
+      <br>
+      <p cadooz-tooltip>aaaaaaaaaa</p>
+      <br>
+      <h1 cadooz-tooltip>aaaaaaaaaa</h1>
+      <br>
+      <img cadooz-tooltip src="/old/nipa.png" alt="" data-label="mitrana todorova">
+      <custom-tooltip radius="0" position="is-top" label="djuro spirov"></custom-tooltip>
     </div>
     <script type="module" src="/main.js"></script>
-    <script>
-      //let state = 'false'
-      let tim = 1
-      const act = () => {
-        console.log('st', defaultOptions.active)
-        let i = tim % 2 === 0 ? false : true
-        datepicker.setAttribute('active', i)
-        tim++
-        //defaultOptions.active = ''
-      }
-      const defaultOptions = {
-        color: 'red',
-        background: '#fff',
-        radius: '0',
-        weight: 700,
-        //active: false
-      }
-      const datepicker = document.querySelector('custom-tooltip');
-      function setAttributes(el, attrs) {
-        for(var key in attrs) {
-          el.setAttribute(key, attrs[key]);
-        }
-      }
-      //setAttributes(datepicker, defaultOptions)
-      const sel = document.querySelector('#deliveryTime')
-      const dateSelected = (e) => {
-        datepicker.value = e.detail.val;
-        const res = document.querySelector('#text')
-        res.value = datepicker.value
-        console.log(7, datepicker.value)
-      }
-      window.addEventListener('selected', dateSelected);
-    </script>
   </body>
 </html>
