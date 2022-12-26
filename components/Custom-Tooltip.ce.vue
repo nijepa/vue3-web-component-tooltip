@@ -38,7 +38,7 @@ const props = defineProps({
     type: String,
     default: "false",
   },
-  label: {CC
+  label: {
     type: String,
     default: "",
   },
@@ -98,8 +98,8 @@ const hasFontWeight = ref(props.fontweight);
 const hasRadius = ref(props.radius);
 const top = ref(0);
 const left = ref(0);
-const clientWidth = ref(0);
-const clientHeight = ref(0);
+// const clientWidth = ref(0);
+// const clientHeight = ref(0);
 const tooltip = ref(null);
 const hostElement = ref(null);
 
@@ -131,36 +131,35 @@ const setWidth = new Map([
   ["is-small", 100],
   ["is-large", 300],
 ]);
-const getWidth = () => {
-  clientWidth.value = getOffset.value.right - getOffset.value.left;
-};
-const getHeight = () => {
-  clientHeight.value = tooltip.value?.offsetHeight + 10;
-};
+// const getWidth = () => {
+//   clientWidth.value = tooltip.value?.offsetWidth;
+// };
+// const getHeight = () => {
+//   clientHeight.value = tooltip.value?.offsetHeight + 10;
+// };
 
 const getPosition = {
   "is-top": () => {
-    top.value = `${getOffset.value.top - clientHeight.value}px`;
+    top.value = `${getOffset.value.top - tooltip.value.offsetHeight - 10}px`;
     left.value = `${
       getOffset.value.left +
-      clientWidth.value / 2 -
-      setWidth.get(hasSize.value) / 2
+      (getOffset.value.right - getOffset.value.left) / 2 -
+      tooltip.value.offsetWidth / 2
     }px`;
   },
   "is-bottom": () => {
     top.value = `${getOffset.value.bottom + 10}px`;
     left.value = `${
       getOffset.value.left +
-      clientWidth.value / 2 -
-      setWidth.get(hasSize.value) / 2
+      (getOffset.value.right - getOffset.value.left) / 2 -
+      tooltip.value.offsetWidth / 2
     }px`;
   },
   "is-left": () => {
     top.value = `${
       getOffset.value.top +
       (getOffset.value.bottom - getOffset.value.top) / 2 -
-      clientHeight.value / 2 +
-      5
+      tooltip.value.offsetHeight / 2
     }px`;
     left.value = `${getOffset.value.left - setWidth.get(hasSize.value) - 10}px`;
   },
@@ -168,8 +167,7 @@ const getPosition = {
     top.value = `${
       getOffset.value.top +
       (getOffset.value.bottom - getOffset.value.top) / 2 -
-      clientHeight.value / 2 +
-      5
+      tooltip.value.offsetHeight / 2
     }px`;
     left.value = `${
       getOffset.value.left + (getOffset.value.right - getOffset.value.left) + 10
@@ -179,18 +177,14 @@ const getPosition = {
 
 const show = () => {
   isActive.value = true;
-  nextTick(() => {
-    getHeight();
-    getWidth();
-    setStyles();
+  //nextTick(() => {
+  setStyles();
+  //getHeight();
+  //getWidth();
+  setTimeout(() => {
     getPosition[hasPosition.value]();
-    console.log(
-      tooltip.value?.offsetHeight,
-      hostElement.value,
-      tooltip,
-      clientHeight.value
-    );
   });
+  //});
 };
 const hide = () => {
   isActive.value = false;
@@ -249,13 +243,13 @@ $shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
     filter: drop-shadow(rgba(0, 0, 0, 0.3) 0 2px 7px);
   }
   &.is-small {
-    width: $small;
+    max-width: $small;
   }
   &.is-medium {
-    width: $medium;
+    max-width: $medium;
   }
   &.is-large {
-    width: $large;
+    max-width: $large;
   }
 }
 .cadooz-tooltip__arrow {
