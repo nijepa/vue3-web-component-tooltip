@@ -12,7 +12,9 @@
         },
       ]"
     >
-      <span class="text">{{ labelText }}</span>
+      <div class="cadooz-tooltip__text" :class="hasShadow">
+        <span class="text">{{ labelText }}</span>
+      </div>
       <svg
         width="10"
         height="10"
@@ -38,7 +40,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "tooltip",
+    default: "",
   },
   position: {
     type: String,
@@ -84,8 +86,8 @@ const props = defineProps({
   },
 });
 
-const labelText = ref(props.label || null);
 const isActive = ref(props.active === "true");
+const labelText = ref(props.label || null);
 const hasPosition = ref(props.position || "is-top");
 const hasSize = ref(props.size || "is-medium");
 const hasBackground = ref(props.background);
@@ -96,77 +98,93 @@ const hasFontWeight = ref(props.fontweight);
 const hasRadius = ref(props.radius);
 const top = ref(0);
 const left = ref(0);
-const clientWidth = ref(0);
-const clientHeight = ref(0);
+// const clientWidth = ref(0);
+// const clientHeight = ref(0);
 const tooltip = ref(null);
+const hostElement = ref(null);
 
 const hasShadow = computed(() =>
   props.shadow === "false" ? "" : "has-shadow"
 );
-const getText = (e) => {
-  labelText.value = e.getAttribute("data-label") || props.label;
-}
 
-const getOffset = (el) => {
-  const rect = el.getBoundingClientRect();
+const setStyles = () => {
+  labelText.value = hostElement.value.getAttribute("data-label") || props.label;
+  hasSize.value = hostElement.value.getAttribute("size") || props.size;
+  hasPosition.value =
+    hostElement.value.getAttribute("position") || props.position;
+  hasBackground.value =
+    hostElement.value.getAttribute("background") || props.background;
+  hasColor.value = hostElement.value.getAttribute("color") || props.color;
+};
+
+const getOffset = computed(() => {
+  const rect = hostElement.value.getBoundingClientRect();
   return {
     left: rect.left + window.scrollX,
     top: rect.top + window.scrollY,
     right: rect.right + window.scrollX,
     bottom: rect.bottom + window.scrollY,
   };
-};
-const getWidth = () => {
-  return hasSize.value === "is-medium"
-    ? 200
-    : hasSize.value === "is-small"
-    ? 100
-    : 300;
-};
-const getHeight = () => {
-  clientHeight.value = tooltip.value?.offsetHeight + 10;
-};
-const getWeight = (e) => {
-  clientWidth.value = getOffset(e).right - getOffset(e).left;
-}
+});
+const setWidth = new Map([
+  ["is-medium", 200],
+  ["is-small", 100],
+  ["is-large", 300],
+]);
+// const getWidth = () => {
+//   clientWidth.value = tooltip.value?.offsetWidth;
+// };
+// const getHeight = () => {
+//   clientHeight.value = tooltip.value?.offsetHeight + 10;
+// };
 
 const getPosition = {
-  "is-top": (e) => {
-    top.value = `${getOffset(e).top - clientHeight.value}px`;
+  "is-top": () => {
+    top.value = `${getOffset.value.top - tooltip.value.offsetHeight - 10}px`;
     left.value = `${
-      getOffset(e).left + clientWidth.value / 2 - getWidth() / 2 - 10
+      getOffset.value.left +
+      (getOffset.value.right - getOffset.value.left) / 2 -
+      tooltip.value.offsetWidth / 2
     }px`;
   },
-  "is-bottom": (e) => {
-    top.value = `${getOffset(e).bottom + 10}px`;
+  "is-bottom": () => {
+    top.value = `${getOffset.value.bottom + 10}px`;
     left.value = `${
-      getOffset(e).left + clientWidth.value / 2 - getWidth() / 2 - 10
+      getOffset.value.left +
+      (getOffset.value.right - getOffset.value.left) / 2 -
+      tooltip.value.offsetWidth / 2
     }px`;
   },
-  "is-left": (e) => {
+  "is-left": () => {
     top.value = `${
-      getOffset(e).top + (getOffset(e).bottom - getOffset(e).top) / 2 - 20
+      getOffset.value.top +
+      (getOffset.value.bottom - getOffset.value.top) / 2 -
+      tooltip.value.offsetHeight / 2
     }px`;
-    left.value = `${getOffset(e).left - getWidth() - 25}px`;
+    left.value = `${getOffset.value.left - setWidth.get(hasSize.value) - 10}px`;
   },
-  "is-right": (e) => {
+  "is-right": () => {
     top.value = `${
-      getOffset(e).top + (getOffset(e).bottom - getOffset(e).top) / 2 - 20
+      getOffset.value.top +
+      (getOffset.value.bottom - getOffset.value.top) / 2 -
+      tooltip.value.offsetHeight / 2
     }px`;
     left.value = `${
-      getOffset(e).left + (getOffset(e).right - getOffset(e).left) + 10
+      getOffset.value.left + (getOffset.value.right - getOffset.value.left) + 10
     }px`;
   },
 };
 
-const show = (e) => {
+const show = () => {
   isActive.value = true;
-  nextTick(() => {
-    getText(e)
-    getHeight();
-    getWeight(e);
-    getPosition[hasPosition.value](e);
+  //nextTick(() => {
+  setStyles();
+  //getHeight();
+  //getWidth();
+  setTimeout(() => {
+    getPosition[hasPosition.value]();
   });
+  //});
 };
 const hide = () => {
   isActive.value = false;
@@ -174,13 +192,18 @@ const hide = () => {
 
 onMounted(() => {
   let tooltips = document.querySelectorAll("[cadooz-tooltip]");
-  tooltips.forEach((c) => {
-    c.addEventListener("mouseover", function () {
-      show(c);
-    });
-    c.addEventListener("mouseleave", function () {
-      hide(c);
-    });
+  tooltips.forEach((el) => {
+    ["mouseover", "touchstart"].forEach((event) =>
+      el.addEventListener(event, () => {
+        hostElement.value = el;
+        show();
+      })
+    );
+    ["mouseleave", "touchleave"].forEach((event) =>
+      el.addEventListener(event, () => {
+        hide();
+      })
+    );
   });
 });
 </script>
@@ -193,12 +216,16 @@ $speed: 400ms; // animation speed
 $small: 100px; // 140
 $medium: 200px; // 250
 $large: 300px; // 480
+$shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+.not-active {
+  display: none;
+}
 .cadooz-tooltip {
   position: fixed;
-  z-index: 100;
-  padding: 0.75em 0.5em;
+  //z-index: 100;
+  //padding: 0.75em 0.5em;
   pointer-events: none;
-  background: $tooltip-background;
+  //background: $tooltip-background;
   border-radius: $tooltip-radius;
   color: $tooltip-color;
   text-align: center;
@@ -212,26 +239,27 @@ $large: 300px; // 480
   top: v-bind(top);
   left: v-bind(left);
   &.has-shadow {
-    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: $shadow;
     filter: drop-shadow(rgba(0, 0, 0, 0.3) 0 2px 7px);
   }
   &.is-small {
-    width: $small;
+    max-width: $small;
   }
   &.is-medium {
-    width: $medium;
+    max-width: $medium;
   }
   &.is-large {
-    width: $large;
+    max-width: $large;
   }
 }
 .cadooz-tooltip__arrow {
+  z-index: 90;
   position: absolute;
   rect {
     fill: $tooltip-background;
   }
   &.has-shadow {
-    box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: $shadow;
   }
   &.is-right,
   &.is-left {
@@ -239,11 +267,11 @@ $large: 300px; // 480
   }
   &.is-right {
     left: calc(0% - 5px);
-    transform: rotate(135deg);
+    transform: rotate(135deg) skew(20deg, 20deg);
   }
   &.is-left {
     left: calc(100% - 5px);
-    transform: rotate(-45deg);
+    transform: rotate(-45deg) skew(20deg, 20deg);
   }
   &.is-bottom,
   &.is-top {
@@ -251,12 +279,20 @@ $large: 300px; // 480
   }
   &.is-bottom {
     top: calc(0% - 5px);
-    transform: rotate(-135deg);
+    transform: rotate(-135deg) skew(20deg, 20deg);
   }
   &.is-top {
     top: calc(100% - 5px);
-    transform: rotate(45deg);
+    transform: rotate(45deg) skew(20deg, 20deg);
   }
+}
+.cadooz-tooltip__text {
+  position: relative;
+  z-index: 100;
+  padding: 0.75em 0.5em;
+  background: $tooltip-background;
+  border-radius: $tooltip-radius;
+  word-break: break-word;
 }
 .wobble-enter-active {
   animation: wobbles $speed ease;
@@ -266,12 +302,14 @@ $large: 300px; // 480
 }
 @keyframes wobbles {
   0% {
-    transform: translateY(75px) scale(0.6, 0.2) skew(30deg, 20deg);
+    transform: translateY(75px) scale(0.3, 0.2) skew(30deg, 20deg);
     opacity: 0;
+    visibility: hidden;
   }
   100% {
     transform: translateY(0px) scale(1, 1) skew(0deg, 0deg);
     opacity: 1;
+    visibility: visible;
   }
 }
 </style>
