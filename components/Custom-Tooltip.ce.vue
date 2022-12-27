@@ -36,7 +36,7 @@ import { ref, computed, onMounted, nextTick, useAttrs } from "vue";
 const props = defineProps({
   active: {
     type: String,
-    default: "false",
+    default: false,
   },
   label: {
     type: String,
@@ -86,7 +86,7 @@ const props = defineProps({
   },
 });
 
-const isActive = ref(props.active === "true");
+const isActive = ref(props.active);
 const labelText = ref(props.label || null);
 const hasPosition = ref(props.position || "is-top");
 const hasSize = ref(props.size || "is-medium");
@@ -181,7 +181,7 @@ const show = () => {
   setStyles();
   //getHeight();
   //getWidth();
-  setTimeout(() => {
+  nextTick(() => {
     getPosition[hasPosition.value]();
   });
   //});
