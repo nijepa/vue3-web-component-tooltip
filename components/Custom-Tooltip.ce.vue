@@ -1,5 +1,5 @@
 <template>
-  <transition name="wobble" appear mode="in-out">
+  <transition :name="direction" appear mode="in-out">
     <div
       ref="tooltip"
       v-if="isActive"
@@ -35,7 +35,7 @@ import { ref, computed, onMounted, nextTick, useAttrs } from "vue";
 // setting props
 const props = defineProps({
   active: {
-    type: String,
+    type: Boolean,
     default: false,
   },
   label: {
@@ -98,8 +98,8 @@ const hasFontWeight = ref(props.fontweight);
 const hasRadius = ref(props.radius);
 const top = ref(0);
 const left = ref(0);
-// const clientWidth = ref(0);
-// const clientHeight = ref(0);
+const direction = ref("vertical");
+const amountpx = ref("25px");
 const tooltip = ref(null);
 const hostElement = ref(null);
 
@@ -115,6 +115,18 @@ const setStyles = () => {
   hasBackground.value =
     hostElement.value.getAttribute("background") || props.background;
   hasColor.value = hostElement.value.getAttribute("color") || props.color;
+  getAnimation();
+};
+
+const setAnimation = new Map([
+  ["is-top", { dir: "vertical", px: "25px" }],
+  ["is-bottom", { dir: "vertical", px: "-25px" }],
+  ["is-left", { dir: "horizontal", px: "25px" }],
+  ["is-right", { dir: "horizontal", px: "-25px" }],
+]);
+const getAnimation = () => {
+  direction.value = setAnimation.get(hasPosition.value).dir;
+  amountpx.value = setAnimation.get(hasPosition.value).px;
 };
 
 const getOffset = computed(() => {
@@ -131,12 +143,6 @@ const setWidth = new Map([
   ["is-small", 100],
   ["is-large", 300],
 ]);
-// const getWidth = () => {
-//   clientWidth.value = tooltip.value?.offsetWidth;
-// };
-// const getHeight = () => {
-//   clientHeight.value = tooltip.value?.offsetHeight + 10;
-// };
 
 const getPosition = {
   "is-top": () => {
@@ -177,14 +183,10 @@ const getPosition = {
 
 const show = () => {
   isActive.value = true;
-  //nextTick(() => {
   setStyles();
-  //getHeight();
-  //getWidth();
   nextTick(() => {
     getPosition[hasPosition.value]();
   });
-  //});
 };
 const hide = () => {
   isActive.value = false;
@@ -213,10 +215,12 @@ $tooltip-background: v-bind(hasBackground); // background color
 $tooltip-radius: v-bind(hasRadius); // border radius
 $tooltip-weight: v-bind(hasFontWeight); // font weight
 $speed: 400ms; // animation speed
+$speedout: 200ms; // animation speed
 $small: 100px; // 140
 $medium: 200px; // 250
 $large: 300px; // 480
 $shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+$direction: v-bind(amountpx);
 .not-active {
   display: none;
 }
@@ -294,20 +298,39 @@ $shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
   border-radius: $tooltip-radius;
   word-break: break-word;
 }
-.wobble-enter-active {
-  animation: wobbles $speed ease;
+.vertical-enter-active {
+  animation: verticals $speed ease;
 }
-.wobble-leave-active {
-  animation: wobbles $speed reverse;
+.vertical-leave-active {
+  animation: verticals $speedout reverse;
 }
-@keyframes wobbles {
+.horizontal-enter-active {
+  animation: horizontals $speed ease;
+}
+.horizontal-leave-active {
+  animation: horizontals $speedout reverse;
+}
+/* transform: translateY(75px) scale(0.3, 0.2) skew(30deg, 20deg);*/
+@keyframes verticals {
   0% {
-    transform: translateY(75px) scale(0.3, 0.2) skew(30deg, 20deg);
+    transform: translateY($direction);
     opacity: 0;
     visibility: hidden;
   }
   100% {
-    transform: translateY(0px) scale(1, 1) skew(0deg, 0deg);
+    transform: translateY(0px);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes horizontals {
+  0% {
+    transform: translateX($direction);
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    transform: translateY(0px);
     opacity: 1;
     visibility: visible;
   }
