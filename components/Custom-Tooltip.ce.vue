@@ -15,6 +15,7 @@
       <div class="cadooz-tooltip__text" :class="hasShadow">
         <span class="text">{{ labelText }}</span>
       </div>
+      <slot />
       <svg
         width="10"
         height="10"
@@ -31,7 +32,7 @@
   </transition>
 </template>
 <script setup>
-import { ref, computed, onMounted, nextTick, useAttrs } from "vue";
+import { ref, computed, onMounted, nextTick, useAttrs } from 'vue';
 // setting props
 const props = defineProps({
   active: {
@@ -40,29 +41,29 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: "",
+    default: '',
   },
   position: {
     type: String,
-    default: "is-top",
+    default: 'is-top',
     validator(value) {
-      return ["is-top", "is-bottom", "is-left", "is-right"].indexOf(value) > -1;
+      return ['is-top', 'is-bottom', 'is-left', 'is-right'].indexOf(value) > -1;
     },
   },
   size: {
     type: String,
-    default: "is-medium",
+    default: 'is-medium',
     validator(value) {
-      return ["is-small", "is-medium", "is-large"].indexOf(value) > -1;
+      return ['is-small', 'is-medium', 'is-large'].indexOf(value) > -1;
     },
   },
   background: {
     type: String,
-    default: "#000",
+    default: '#000',
   },
   color: {
     type: String,
-    default: "#fff",
+    default: '#fff',
   },
   font: {
     type: String,
@@ -70,7 +71,7 @@ const props = defineProps({
   },
   fontsize: {
     type: String,
-    default: "1em",
+    default: '1em',
   },
   fontweight: {
     type: Number,
@@ -78,7 +79,7 @@ const props = defineProps({
   },
   radius: {
     type: String,
-    default: "4px",
+    default: '4px',
   },
   shadow: {
     type: Boolean,
@@ -88,8 +89,8 @@ const props = defineProps({
 
 const isActive = ref(props.active);
 const labelText = ref(props.label || null);
-const hasPosition = ref(props.position || "is-top");
-const hasSize = ref(props.size || "is-medium");
+const hasPosition = ref(props.position || 'is-top');
+const hasSize = ref(props.size || 'is-medium');
 const hasBackground = ref(props.background);
 const hasColor = ref(props.color);
 const hasFont = ref(props.font);
@@ -98,86 +99,78 @@ const hasFontWeight = ref(props.fontweight);
 const hasRadius = ref(props.radius);
 const top = ref(0);
 const left = ref(0);
-const direction = ref("vertical");
-const amountpx = ref("25px");
+const direction = ref('vertical');
+const amountpx = ref('25px');
 const tooltip = ref(null);
 const hostElement = ref(null);
 
 const hasShadow = computed(() =>
-  props.shadow === "false" ? "" : "has-shadow"
+  props.shadow === 'false' ? '' : 'has-shadow'
 );
 
 const setStyles = () => {
-  labelText.value = hostElement.value.getAttribute("data-label") || props.label;
-  hasSize.value = hostElement.value.getAttribute("size") || props.size;
+  labelText.value = hostElement.value.getAttribute('data-label') || props.label;
+  hasSize.value = hostElement.value.getAttribute('size') || props.size;
   hasPosition.value =
-    hostElement.value.getAttribute("position") || props.position;
+    hostElement.value.getAttribute('position') || props.position;
   hasBackground.value =
-    hostElement.value.getAttribute("background") || props.background;
-  hasColor.value = hostElement.value.getAttribute("color") || props.color;
+    hostElement.value.getAttribute('background') || props.background;
+  hasColor.value = hostElement.value.getAttribute('color') || props.color;
   getAnimation();
 };
 
 const setAnimation = new Map([
-  ["is-top", { dir: "vertical", px: "25px" }],
-  ["is-bottom", { dir: "vertical", px: "-25px" }],
-  ["is-left", { dir: "horizontal", px: "25px" }],
-  ["is-right", { dir: "horizontal", px: "-25px" }],
+  ['is-top', { dir: 'vertical', px: '25px' }],
+  ['is-bottom', { dir: 'vertical', px: '-25px' }],
+  ['is-left', { dir: 'horizontal', px: '25px' }],
+  ['is-right', { dir: 'horizontal', px: '-25px' }],
 ]);
 const getAnimation = () => {
   direction.value = setAnimation.get(hasPosition.value).dir;
   amountpx.value = setAnimation.get(hasPosition.value).px;
 };
 
-const getOffset = computed(() => {
+const getOffset = () => {
   const rect = hostElement.value.getBoundingClientRect();
   return {
-    left: rect.left + window.scrollX,
-    top: rect.top + window.scrollY,
-    right: rect.right + window.scrollX,
-    bottom: rect.bottom + window.scrollY,
+    left: rect.left,
+    top: rect.top,
+    right: rect.right,
+    bottom: rect.bottom,
+    width: rect.width,
+    height: rect.height,
   };
-});
+};
 const setWidth = new Map([
-  ["is-medium", 200],
-  ["is-small", 100],
-  ["is-large", 300],
+  ['is-medium', 200],
+  ['is-small', 100],
+  ['is-large', 300],
 ]);
 
 const getPosition = {
-  "is-top": () => {
-    top.value = `${getOffset.value.top - tooltip.value.offsetHeight - 10}px`;
+  'is-top': () => {
+    top.value = `${getOffset().top - tooltip.value.offsetHeight - 10}px`;
     left.value = `${
-      getOffset.value.left +
-      (getOffset.value.right - getOffset.value.left) / 2 -
-      tooltip.value.offsetWidth / 2
+      getOffset().left + getOffset().width / 2 - tooltip.value.offsetWidth / 2
     }px`;
   },
-  "is-bottom": () => {
-    top.value = `${getOffset.value.bottom + 10}px`;
+  'is-bottom': () => {
+    top.value = `${getOffset().bottom + 10}px`;
     left.value = `${
-      getOffset.value.left +
-      (getOffset.value.right - getOffset.value.left) / 2 -
-      tooltip.value.offsetWidth / 2
+      getOffset().left + getOffset().width / 2 - tooltip.value.offsetWidth / 2
     }px`;
   },
-  "is-left": () => {
+  'is-left': () => {
     top.value = `${
-      getOffset.value.top +
-      (getOffset.value.bottom - getOffset.value.top) / 2 -
-      tooltip.value.offsetHeight / 2
+      getOffset().top + getOffset().height / 2 - tooltip.value.offsetHeight / 2
     }px`;
-    left.value = `${getOffset.value.left - setWidth.get(hasSize.value) - 10}px`;
+    left.value = `${getOffset().left - setWidth.get(hasSize.value) - 10}px`;
   },
-  "is-right": () => {
+  'is-right': () => {
     top.value = `${
-      getOffset.value.top +
-      (getOffset.value.bottom - getOffset.value.top) / 2 -
-      tooltip.value.offsetHeight / 2
+      getOffset().top + getOffset().height / 2 - tooltip.value.clientHeight / 2
     }px`;
-    left.value = `${
-      getOffset.value.left + (getOffset.value.right - getOffset.value.left) + 10
-    }px`;
+    left.value = `${getOffset().left + getOffset().width + 10}px`;
   },
 };
 
@@ -185,6 +178,7 @@ const show = () => {
   isActive.value = true;
   setStyles();
   nextTick(() => {
+    getOffset();
     getPosition[hasPosition.value]();
   });
 };
@@ -193,15 +187,16 @@ const hide = () => {
 };
 
 onMounted(() => {
-  let tooltips = document.querySelectorAll("[cadooz-tooltip]");
+  let tooltips = document.querySelectorAll('[cadooz-tooltip]');
+  window.addEventListener('scroll', getOffset);
   tooltips.forEach((el) => {
-    ["mouseover", "touchstart"].forEach((event) =>
+    ['mouseover', 'touchstart'].forEach((event) =>
       el.addEventListener(event, () => {
         hostElement.value = el;
         show();
       })
     );
-    ["mouseleave", "touchleave"].forEach((event) =>
+    ['mouseleave', 'touchleave'].forEach((event) =>
       el.addEventListener(event, () => {
         hide();
       })
